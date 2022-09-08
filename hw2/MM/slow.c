@@ -1,6 +1,6 @@
 #include <time.h>
 #include <stdlib.h>
-#include <cstdio>
+#include <stdio.h>
 
 #define NUMROWS 2520
 #define NUMCOLS 2520

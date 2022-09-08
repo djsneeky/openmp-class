@@ -1,0 +1,3 @@
+Even without running both programs, it is apparent that verySlow.c is slower than slow.c. Both programs produce the same result, but the slow.c memory access is much more efficient compared to verySlow.c.
+slow.c access it's matrices in tiles. This allows for better use of the cache inside the CPU, reducing cache misses on data.
+verySlow. does not perform tiling of its data, resulting in many more cache misses, thus a longer runtime.

@@ -1,0 +1,3 @@
+The reason for the difference between the run times of the first two sequential runs is obvious. The third loop is parallel, making it much faster.
+
+The reason for the difference betwen the sum values of the first and second sequential runs is likely due to precision errors when adding floats. The omp reduction removes these precision errors in its implementation it seems.

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <omp.h>
 
 int* newArray(int n) {
@@ -20,16 +19,15 @@ int main () {
     int n = 1000000;
     int* a = newArray(n);
     double start, end;
-    int nt = omp_get_max_threads();
-    int res[nt*8];
+    int res;
     start = omp_get_wtime();
-    #pragma omp parallel for
-    for (int i=0; i < 1000000; i++) {
-        res[omp_get_thread_num()*8] += a[i];
+    #pragma omp parallel for reduction(+:res)
+    for (int i = 0; i < 1000000; i++) {
+        res += a[i];
     }
     end = omp_get_wtime();
 
-    printf("Test Reduction Elapsed seconds: %f", end-start);
+    printf("Reduction Sum: %d\tElapsed seconds: %f", res, end-start);
 
     // free vars
     free(a);
