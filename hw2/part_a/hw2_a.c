@@ -3,42 +3,29 @@
 #include <omp.h>
 
 int main () {
-    /* Serial Region  (master thread)                                */
-    /* Parameters of the Application                                 */
-    int len=30;
-    char name[30];
-
     /* OpenMP Parameters */
-    int id, nthreads, ncores;
+    int nthreads, ncores;
 
     // get number of cores
     ncores = omp_get_num_procs();
-    printf("Number of cores: %d\n", ncores);
+    printf("SEQUENTIAL: Number of cores: %d\n", ncores);
 
-    /* Master thread obtains information about itself and its environment. */
-    nthreads = omp_get_num_threads();       /* get number of threads */
-    id = omp_get_thread_num();              /* get thread            */
-    gethostname(name,len);                  /* get run-host name     */
-    printf("Master Thread:     Runhost:%s   Thread:%d of %d threads\n", name,id,nthreads);
+    // get number of threads
+    nthreads = omp_get_max_threads();
+    printf("SEQUENTIAL: Number of threads: %d\n", nthreads);
 
     /* Open parallel region. */
-    /* Each thread obtains information about itself and its environment. */
-    #pragma omp parallel private(name,id,nthreads)
+    #pragma omp parallel
     {
+        printf("PARALLEL: Other Thread:%d\n", omp_get_thread_num());
+
+        #pragma omp master
+        printf("PARALLEL: Master Thread:%d\n", omp_get_thread_num());
+
         #pragma omp single
-        {
-            nthreads = omp_get_num_threads();      /* get number of threads */
-            id = omp_get_thread_num();             /* get thread            */
-            gethostname(name,len);                 /* get run-host name     */
-            printf("Single Thread:   Runhost:%s   Thread:%d of %d threads\n", name,id,nthreads);
-        }
-        
+        printf("PARALLEL: Single Thread: %d\n", omp_get_thread_num());
     }
     /* Close parallel region. */
-
-    /* Serial Region  (master thread)                                */
-    printf("Master Thread:     Runhost:%s   Thread:%d of %d thread\n", name,id,nthreads);
-    return 0;
 
     return 0;
 }
