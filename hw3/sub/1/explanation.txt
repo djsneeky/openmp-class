@@ -1,0 +1,5 @@
+In hw4a.c, tid is allocated into the main stack frame.  It is then specified as private, which allows threads to have their own created version of tid at another address in memory. This way, our tid values are not the same and can be representative of the thread that is executing.
+
+In hw4b.c, tid is no longer allocated in the stack frame, but rather allocated within the for loop.  This allows the variable to be created by each thread, meaning that each thread will automatically have it's own address for each instance of the variable.  This way, we can ensure that running thread prints the correct thread number.
+
+In hw4c.c, tid is again allocated in the main stack frame outside of the parallel for loop.  When the parallel for loop is executed, the tid address is the same for all threads, and thus value printed is not guaranteed to be the correct thread number.
