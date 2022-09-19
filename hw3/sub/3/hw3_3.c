@@ -7,20 +7,7 @@
 
 void initArray(int *a, int m, int n, int val);
 void matrixMultiply(int *a, int *b, int *c, int r1, int c1, int r2, int c2);
-void matrixDisplay(int *a, int row, int column);
-
-int *newArrayMalloc(int n_row, int n_col, int val)
-{
-  int *a = (int *)malloc(n_row * n_col * sizeof(int));
-  for (int i = 0; i < n_col; i++)
-  {
-    for (int j = 0; j < n_row; j++)
-    {
-      idx(a, i, j, n_col) = val;
-    }
-  }
-  return a;
-}
+void matrixDisplay(int *a, int m, int n);
 
 void initArray(int *a, int m, int n, int val)
 {
@@ -110,12 +97,6 @@ int main(int argc, char *argv[])
   matrixDisplay((int *)a, r1, c1);
   matrixDisplay((int *)b, r2, c2);
   matrixDisplay((int *)c, r3, c3);
-
-  matrixMultiply((int *)a, (int *)b, (int *)d1, r1, c1, r2, c2);
-  matrixMultiply((int *)a, (int *)c, (int *)d2, r1, c1, r3, c3);
-
-  matrixDisplay((int *)d1, r1, c2);
-  matrixDisplay((int *)d2, r1, c3);
 
 #pragma omp parallel sections
   {

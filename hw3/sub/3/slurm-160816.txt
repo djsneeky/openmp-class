@@ -1,0 +1,22 @@
+
+Output Matrix: 2 x 3
+1  1  1  
+1  1  1  
+
+Output Matrix: 3 x 2
+2  2  
+2  2  
+2  2  
+
+Output Matrix: 3 x 1
+3  
+3  
+3  
+
+Output Matrix: 2 x 2
+6  6  
+6  6  
+
+Output Matrix: 2 x 1
+9  
+9  
