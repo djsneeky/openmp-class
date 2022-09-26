@@ -1,1 +1,7 @@
+Static scheduling elapsed seconds: 0.248335
+Static scheduling block size 50 elapsed seconds: 0.243389
+Dynamic scheduling elapsed seconds: 0.121257
+Dynamic scheduling block size 50 elapsed seconds: 0.243046
+Guided scheduling elapsed seconds: 0.119718
 
+Increasing the thread count minimizes the difference between block sizes on static scheduling. It also removes any discernible speed up that we get when running dynamic block size 50 scheduling. As before though, dynamic and guided scheduling nearly match, with guided being slightly faster. This indicates that with increased threads, block size makes less of an impact for static scheduling and dynamic because work is distributed among more threads reducing the effect of chunks per thread.
