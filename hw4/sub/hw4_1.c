@@ -4,7 +4,7 @@
 
 void doWork(int t)
 {
-  sleep(t);
+  usleep(t);
 }
 
 int *initWork(int n)
