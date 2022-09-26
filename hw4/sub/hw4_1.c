@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     doWork(w[i]);
   }
   end = omp_get_wtime();
-  printf("Static scheduling - elapsed seconds: %lf", end - start);
+  printf("Static scheduling - elapsed seconds: %lf\n", end - start);
 
   // static scheduling with block size 50
   start = omp_get_wtime();
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     doWork(w[i]);
   }
   end = omp_get_wtime();
-  printf("Static scheduling block size 50 elapsed seconds: %lf", end - start);
+  printf("Static scheduling block size 50 elapsed seconds: %lf\n", end - start);
 
   // dynamic scheduling
   start = omp_get_wtime();
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     doWork(w[i]);
   }
   end = omp_get_wtime();
-  printf("Dynamic scheduling elapsed seconds: %lf", end - start);
+  printf("Dynamic scheduling elapsed seconds: %lf\n", end - start);
 
   // dynamic scheduling block size 50
   start = omp_get_wtime();
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     doWork(w[i]);
   }
   end = omp_get_wtime();
-  printf("Dynamic scheduling block size 50 elapsed seconds: %lf", end - start);
+  printf("Dynamic scheduling block size 50 elapsed seconds: %lf\n", end - start);
 
   // guided scheduling
   start = omp_get_wtime();
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     doWork(w[i]);
   }
   end = omp_get_wtime();
-  printf("Guided scheduling elapsed seconds: %lf", end - start);
+  printf("Guided scheduling elapsed seconds: %lf\n", end - start);
 
   free(w);
 }
