@@ -1,0 +1,1 @@
+Guided and dynamic scheduling strategies result in the lowest runtime, indicating that our work is not equal among all threads. Since we sleep for different amounts of time for each entry in our array, this makes sense.
