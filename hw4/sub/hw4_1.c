@@ -4,7 +4,7 @@
 
 void doWork(int t)
 {
-  usleep(t);
+  usleep(t*1000);
 }
 
 int *initWork(int n)
@@ -35,12 +35,12 @@ int main(int argc, char *argv[])
   // static scheduling
   start = omp_get_wtime();
 #pragma omp parallel for schedule(static)
-  for (i = 0; i < n; i += 50)
+  for (i = 0; i < n; i++)
   {
     doWork(w[i]);
   }
   end = omp_get_wtime();
-  printf("Static scheduling - elapsed seconds: %lf\n", end - start);
+  printf("Static scheduling elapsed seconds: %lf\n", end - start);
 
   // static scheduling with block size 50
   start = omp_get_wtime();
