@@ -1,6 +1,7 @@
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 typedef struct Q
 {
@@ -42,6 +43,11 @@ int getWork(struct Q *workQ)
     printf("ERROR: attempt to get work from empty Q%d\n", workQ->pos);
 }
 
+void doWork(int t)
+{
+  usleep(t * 1000);
+}
+
 int main(int argc, char *argv[])
 {
   int n = 1000;
@@ -58,21 +64,23 @@ int main(int argc, char *argv[])
   start = omp_get_wtime();
   for (int i = 0; i < n; i++)
   {
-    getWork(work_q);
+    doWork(getWork(work_q));
   }
   end = omp_get_wtime();
   printf("Sequential elapsed seconds: %lf\n", end - start);
 
   // go back to end of queue
   work_q->pos = work_q->size;
-  
+
   // parallel work
   start = omp_get_wtime();
 #pragma omp parallel for
   {
     for (int i = 0; i < n; i++)
     {
-      getWork(work_q);
+#pragma omp critical
+      int w = getWork(work_q);
+      doWork(w);
     }
   }
   end = omp_get_wtime();
