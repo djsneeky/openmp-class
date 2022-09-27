@@ -1,0 +1,26 @@
+Initial sleep values:
+w[0] = 0
+w[50] = 0
+w[100] = 1
+w[150] = 0
+w[200] = 0
+w[250] = 2
+w[300] = 0
+w[350] = 0
+w[400] = 0
+w[450] = 0
+w[500] = 5
+w[550] = 0
+w[600] = 0
+w[650] = 0
+w[700] = 0
+w[750] = 7
+w[800] = 0
+w[850] = 8
+w[900] = 0
+w[950] = 9
+Static scheduling elapsed seconds: 0.248335
+Static scheduling block size 50 elapsed seconds: 0.243389
+Dynamic scheduling elapsed seconds: 0.121257
+Dynamic scheduling block size 50 elapsed seconds: 0.243046
+Guided scheduling elapsed seconds: 0.119718
