@@ -1,8 +1,8 @@
 #!/bin/bash
-# FILENAME:  hw4_2.sub
+# FILENAME:  hw4_3.sub
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
 #SBATCH --time=00:01:00
 
-export OMP_NUM_THREADS=20
-./hw4_2
+export OMP_NUM_THREADS=4
+./hw4_3
