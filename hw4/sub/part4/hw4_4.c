@@ -51,6 +51,7 @@ void doWork(int t)
 int main(int argc, char *argv[])
 {
   int n = 1000;
+  int w;
   double start, end;
 
   struct Q *work_q = initQ(n);
@@ -75,13 +76,11 @@ int main(int argc, char *argv[])
   // parallel work
   start = omp_get_wtime();
 #pragma omp parallel for
+  for (int i = 0; i < n; i++)
   {
-    for (int i = 0; i < n; i++)
-    {
 #pragma omp critical
-      int w = getWork(work_q);
-      doWork(w);
-    }
+    w = getWork(work_q);
+    doWork(w);
   }
   end = omp_get_wtime();
   printf("Parallel elapsed seconds: %lf\n", end - start);
