@@ -1,0 +1,3 @@
+Sequential Forward Sum: 15.403683	Elapsed seconds: 0.027999
+Sequential Reverse Sum: 16.686031	Elapsed seconds: 0.027583
+Forward reduction Sum: 16.686163	Elapsed seconds: 0.003260
