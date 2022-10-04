@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <omp.h>
+#include <math.h>
 
 int num_nodes_par = 0;
 
@@ -143,7 +144,7 @@ int main()
     // serial
     start = omp_get_wtime();
     s_tree = build(0);
-    int s_count = traverse(s_tree);
+    s_count = traverse(s_tree);
     end = omp_get_wtime();
     printf("Sequential elapsed seconds: %lf\n", end - start);
     printf("Sequential count: %d", s_count);
