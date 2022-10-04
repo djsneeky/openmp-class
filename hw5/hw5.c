@@ -147,7 +147,7 @@ int main()
     s_count = traverse(s_tree);
     end = omp_get_wtime();
     printf("Sequential elapsed seconds: %lf\n", end - start);
-    printf("Sequential count: %d", s_count);
+    printf("Sequential count: %d\n", s_count);
 
 
     // build the tree parallelly
@@ -170,5 +170,5 @@ int main()
     }
     end = omp_get_wtime();
     printf("Parallel elapsed seconds: %lf\n", end - start);
-    printf("Parallel count: %d", p_count);
+    printf("Parallel count: %d\n", p_count);
 }
