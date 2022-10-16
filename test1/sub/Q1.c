@@ -92,6 +92,7 @@ int main()
     fflush(stdout);
 
     // OMP Reduction version
+    res = 0;
     execTime = -omp_get_wtime();
 #pragma omp parallel for reduction(+:res)
     for (int i = 0; i < PROBLEMSIZE; i++)
