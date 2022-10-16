@@ -53,14 +53,41 @@ int main()
 
     // sequential execution to check the answer
     execTime = -omp_get_wtime();
-    res = dproduct(a, b, 0,     /* lower bound in the array of where to start the computation */
+    res = dproduct(a, b, 0,      /* lower bound in the array of where to start the computation */
                    PROBLEMSIZE); /* upper bound in the array of the last element+1 to process */
     execTime += omp_get_wtime();
     printf("dot product sequential result: %lf, time taken %lf\n", res, execTime);
     fflush(stdout);
 
     // parallel version with tasks
+    int nthreads = 4;
+    execTime = -omp_get_wtime();
+#pragma omp parallel
+    {
+#pragma omp single
+        {
+#pragma omp task
+            {
+                res = dproduct(a, b, 0, PROBLEMSIZE / nthreads);
+            }
+#pragma omp task
+            {
+                res = dproduct(a, b, PROBLEMSIZE / nthreads, PROBLEMSIZE / nthreads * 2);
+            }
+#pragma omp task
+            {
+                res = dproduct(a, b, PROBLEMSIZE / nthreads * 2, PROBLEMSIZE / nthreads * 3);
+            }
+#pragma omp task
+            {
+                res = dproduct(a, b, PROBLEMSIZE / nthreads * 3, PROBLEMSIZE);
+            }
+#pragma omp taskwait
+        }
+    }
+    execTime += omp_get_wtime();
     printf("dot product parallel result: %lf, time taken %lf\n", res, execTime);
+    fflush(stdout);
 
     // OMP Reduction version
     printf("dot product omp reduction result: %lf, time taken %lf\n", res, execTime);
