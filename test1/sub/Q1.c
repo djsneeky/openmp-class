@@ -4,7 +4,7 @@
 
 #define PROBLEMSIZE 10000000
 
-double dproduct(float *a, float *b, float low, float high, int size)
+double dproduct(float *a, float *b, float low, float high)
 {
     double result = 0.0;
     for (int i = low; i < high; i++)
