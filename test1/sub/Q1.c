@@ -3,6 +3,7 @@
 #include <omp.h>
 
 #define PROBLEMSIZE 10000000
+#define NUMTHREADS  4
 
 double dproduct(float *a, float *b, float low, float high)
 {
@@ -46,10 +47,11 @@ int main()
         a[i] = b[i] = 1;
     }
 
-    // for (int i = 0; i < NUMTHREADS; i++)
-    // {
-    //     result[i] = 0;
-    // }
+    float result[NUMTHREADS];
+    for (int i = 0; i < NUMTHREADS; i++)
+    {
+        result[i] = 0;
+    }
 
     // sequential execution to check the answer
     execTime = -omp_get_wtime();
@@ -60,7 +62,6 @@ int main()
     fflush(stdout);
 
     // parallel version with tasks
-    int nthreads = 4;
     execTime = -omp_get_wtime();
 #pragma omp parallel
     {
@@ -68,23 +69,24 @@ int main()
         {
 #pragma omp task
             {
-                res = dproduct(a, b, 0, PROBLEMSIZE / nthreads);
+                result[0] = dproduct(a, b, 0, PROBLEMSIZE / NUMTHREADS);
             }
 #pragma omp task
             {
-                res = dproduct(a, b, PROBLEMSIZE / nthreads, PROBLEMSIZE / nthreads * 2);
+                result[1] = dproduct(a, b, PROBLEMSIZE / NUMTHREADS, PROBLEMSIZE / NUMTHREADS * 2);
             }
 #pragma omp task
             {
-                res = dproduct(a, b, PROBLEMSIZE / nthreads * 2, PROBLEMSIZE / nthreads * 3);
+                result[2] = dproduct(a, b, PROBLEMSIZE / NUMTHREADS * 2, PROBLEMSIZE / NUMTHREADS * 3);
             }
 #pragma omp task
             {
-                res = dproduct(a, b, PROBLEMSIZE / nthreads * 3, PROBLEMSIZE);
+                result[3] = dproduct(a, b, PROBLEMSIZE / NUMTHREADS * 3, PROBLEMSIZE);
             }
 #pragma omp taskwait
         }
     }
+    res = result[0] + result[1] + result[2] + result[3];
     execTime += omp_get_wtime();
     printf("dot product parallel result: %lf, time taken %lf\n", res, execTime);
     fflush(stdout);
