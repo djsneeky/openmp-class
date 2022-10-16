@@ -46,10 +46,10 @@ int main()
         a[i] = b[i] = 1;
     }
 
-    for (int i = 0; i < NUMTHREADS; i++)
-    {
-        result[i] = 0;
-    }
+    // for (int i = 0; i < NUMTHREADS; i++)
+    // {
+    //     result[i] = 0;
+    // }
 
     // sequential execution to check the answer
     execTime = -omp_get_wtime();
