@@ -1,0 +1,3 @@
+count before parallel: 0, address: 0x7ffe2f992c00
+count during parallel: 1, address: 0x7ffe2f992c00
+count after parallel: 1, address: 0x7ffe2f992c00
