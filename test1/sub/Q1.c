@@ -3,7 +3,7 @@
 #include <omp.h>
 
 #define PROBLEMSIZE 10000000
-#define NUMTHREADS  4
+#define NUMTHREADS 4
 
 double dproduct(float *a, float *b, float low, float high)
 {
@@ -92,6 +92,15 @@ int main()
     fflush(stdout);
 
     // OMP Reduction version
+    execTime = -omp_get_wtime();
+#pragma omp parallel for reduction(+:res)
+    {
+        for (int i = 0; i < PROBLEMSIZE; i++)
+        {
+            res += (a[i] * b[i]);
+        }
+    }
+    execTime += omp_get_wtime();
     printf("dot product omp reduction result: %lf, time taken %lf\n", res, execTime);
 
     free(a);
