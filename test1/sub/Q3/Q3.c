@@ -79,7 +79,6 @@ float *parallel_rod(float *ping, float *pong)
 
     // check which has latest data
     // if flag = true, then ping has latest, else pong
-    float *res_ptr;
     if (flag)
     {
         res_ptr = ping;
