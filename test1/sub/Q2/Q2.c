@@ -105,12 +105,12 @@ int main()
     }
 
     // print result of data parallel
-    printf("Sequential data results: [ ");
+    printf("Parallel data results: [ ");
     for (int i = 0; i < DATASIZE; i++)
     {
         printf("%d ", data[i]);
         sum += data[i];
     }
     printf("]\r\n");
-    printf("Sequential sum: %d\r\n", sum);
+    printf("Parallel sum: %d\r\n", sum);
 }
