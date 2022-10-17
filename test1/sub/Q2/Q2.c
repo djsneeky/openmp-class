@@ -3,6 +3,7 @@
 #include <omp.h>
 
 #define MEMSIZE 100000
+#define DATASIZE 10
 #define NUMTHREADS 4
 
 typedef struct node
@@ -14,7 +15,7 @@ typedef struct node
 
 int memIdx = 0;
 nodeT *memory;
-int data[10];
+int data[DATASIZE];
 
 void initData()
 {
@@ -53,7 +54,7 @@ int build(int count)
         return -1;
     }
 
-    count = ++count % 10;
+    count = ++count % DATASIZE;
     memory[me].valIdx = count;
     memory[me].left = build(count);
     memory[me].right = build(count);
@@ -65,4 +66,51 @@ int main()
 
     init();
     build(-1);
+
+    int sum = 0;
+
+    // SEQUENTIAL SECTION
+    for (int i = 0; i < MEMSIZE; i++)
+    {
+        data[memory[i].valIdx]++;
+    }
+
+    // print result of data sequential
+    printf("Sequential data results: [ ");
+    for (int i = 0; i < DATASIZE; i++)
+    {
+        printf("%d ", data[i]);
+        sum += data[i];
+    }
+    printf("]\r\n");
+    printf("Sequential sum: %d", sum);
+
+    // PARALLEL SECTION
+    initData();
+    sum = 0;
+    // array of locks
+    omp_lock_t lock[DATASIZE];
+    for (int i = 0; i < DATASIZE; i++)
+    {
+        omp_init_lock(&(lock[i]));
+    }
+
+    // lock only the index we care about
+    #pragma omp parallel for
+    for (int i = 0; i < MEMSIZE; i++)
+    {
+        omp_set_lock(&(lock[memory[i].valIdx]));
+        data[memory[i].valIdx]++;
+        omp_unset_lock(&(lock[memory[i].valIdx]));
+    }
+
+    // print result of data parallel
+    printf("Sequential data results: [ ");
+    for (int i = 0; i < DATASIZE; i++)
+    {
+        printf("%d ", data[i]);
+        sum += data[i];
+    }
+    printf("]\r\n");
+    printf("Sequential sum: %d", sum);
 }
