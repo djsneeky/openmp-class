@@ -83,7 +83,7 @@ int main()
         sum += data[i];
     }
     printf("]\r\n");
-    printf("Sequential sum: %d", sum);
+    printf("Sequential sum: %d\r\n", sum);
 
     // PARALLEL SECTION
     initData();
@@ -112,5 +112,5 @@ int main()
         sum += data[i];
     }
     printf("]\r\n");
-    printf("Sequential sum: %d", sum);
+    printf("Sequential sum: %d\r\n", sum);
 }
