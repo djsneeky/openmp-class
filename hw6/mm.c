@@ -2,10 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#ifndef min
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#endif
-
 void printArray(double* a, int rows, int cols) {
    for (int i=0; i<rows; i++) {
       for (int j=0; j<cols; j++) {
@@ -28,19 +24,24 @@ double* makeArray(int rows, int cols) {
    return arr;
 }
 
+int min(int i, int j)
+{
+    return ((i) < (j) ? (i) : (j));
+}
+
 int main (int argc, char *argv[]) {
 
-   const int ROWS = 16;
-   const int COLS = 16;
-   const int tasks = 16;
+   const int ROWS = 1600;
+   const int COLS = 1600;
+   const int tasks = 1600;
    const int stripeSize = COLS/tasks;
 
    double* a = makeArray(ROWS, COLS);
    double* b = makeArray(ROWS, COLS);
    double* c = makeArray(ROWS, COLS);
 
-   printArray(a, ROWS, COLS);
-   printArray(b, ROWS, COLS);
+   // printArray(a, ROWS, COLS);
+   // printArray(b, ROWS, COLS);
 
    clock_t timer = -clock( );
    for (int t=0; t<tasks; t++) {
@@ -57,5 +58,5 @@ int main (int argc, char *argv[]) {
    double timeTaken = (timer + clock( ))/CLOCKS_PER_SEC;
    printf("time taken for matrix multiply: %.2f ", timeTaken);
 
-   printArray(c, ROWS, COLS);
+   // printArray(c, ROWS, COLS);
 }
