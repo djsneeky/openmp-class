@@ -48,10 +48,10 @@ int main(int argc, char *argv[])
     double *b = makeArray(ROWS, COLS);
     double *c = makeArray(ROWS, COLS);
     
-    printf("Array a:\r\n");
-    printArray(a, ROWS, COLS);
-    printf("Array b:\r\n");
-    printArray(b, ROWS, COLS);
+    // printf("Array a:\r\n");
+    // printArray(a, ROWS, COLS);
+    // printf("Array b:\r\n");
+    // printArray(b, ROWS, COLS);
 
     double execTime;
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     }
     execTime += omp_get_wtime();
 
-    printArray(c, ROWS, COLS);
+    // printArray(c, ROWS, COLS);
     printf("Time taken for matrix multiply - openmp: %.2lf", execTime);
 
 }
