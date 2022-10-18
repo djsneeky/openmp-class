@@ -31,6 +31,11 @@ double *makeArray(int rows, int cols)
     return arr;
 }
 
+int min(int i, int j)
+{
+    return ((i) < (j) ? (i) : (j));
+}
+
 int main(int argc, char *argv[])
 {
 
