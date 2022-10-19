@@ -1,8 +1,8 @@
 #!/bin/bash
-# FILENAME: mpi_hello.sub
+# FILENAME: mm_mpi.sub
 #SBATCH --nodes=4
 #SBATCH --ntasks-per-node=10
 #SBATCH -t 00:01:00
 #SBATCH -A scholar
 
-srun --mpi==pmi2 -n 40 ./mpi_hello
+srun --mpi==pmi2 -n 40 ./mm_mpiff
