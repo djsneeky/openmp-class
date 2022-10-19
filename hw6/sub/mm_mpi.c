@@ -129,12 +129,12 @@ int main(int argc, char *argv[])
 
     // // compute
 
-    double *a_reconstruct = NULL;
-    if (rank == 0)
-    {
-        a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
-        printf("Gathering data...\r\n");
-    }
+    // double *a_reconstruct = NULL;
+    // if (rank == 0)
+    // {
+    //     a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
+    //     printf("Gathering data...\r\n");
+    // }
     // MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_reconstruct, NUM_ELEMENTS, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     // if (rank == 0)
