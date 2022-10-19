@@ -20,7 +20,6 @@ void printArray(double *a, int rows, int cols)
         }
         printf("\r\n");
     }
-    printf("\r\n");
 }
 
 double *makeArray(int rows, int cols)
@@ -116,9 +115,9 @@ int main(int argc, char *argv[])
     //     MPI_Send(c, sizeof(c), MPI_INT, r, 1, MPI_COMM_WORLD);
     // }
 
-    const int a_stripe_cnt = stripe_width * ROWS;
+    const int a_stripe_cnt = stripe_width * COLS;
     double *a_stripe = (double *)malloc(a_stripe_cnt * sizeof(double));
-    const int b_stripe_cnt = stripe_width * COLS;
+    const int b_stripe_cnt = stripe_width * ROWS;
     double *b_stripe = (double *)malloc(b_stripe_cnt * sizeof(double));
 
     if (rank == 0)
@@ -128,6 +127,8 @@ int main(int argc, char *argv[])
     MPI_Scatter(a, a_stripe_cnt, MPI_DOUBLE, a_stripe, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     // // compute
+    printf("rank %d a_stripe", rank);
+    printArray(a_stripe, stripe_width, COLS);
 
     double *a_reconstruct = NULL;
     if (rank == 0)
