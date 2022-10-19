@@ -2,7 +2,7 @@
 # FILENAME: mm_mpi.sub
 #SBATCH --nodes=4
 #SBATCH --ntasks-per-node=16
-#SBATCH -t 00:01:00
+#SBATCH -t 00:0:30
 #SBATCH -A scholar
 
-srun --mpi=pmi2 -n 4 ./mm_mpi
+srun --mpi=pmi2 -n 1 ./mm_mpi
