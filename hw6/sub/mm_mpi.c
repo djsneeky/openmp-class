@@ -4,7 +4,7 @@
 #include <mpi.h>
 
 // offset into row, then over to correct column
-#define idx(u, r, c) (u[r*COLS + c])
+#define idx(u, r, c) (u + r*COLS + c)
 
 #define ROWS            16
 #define COLS            16
@@ -73,25 +73,8 @@ int main(int argc, char *argv[])
     MPI_Get_processor_name(name, &len);     /* get run-host name   */
 
     double *a = NULL;
-    double *b = NULL;
-    double *c = NULL;
     const int stripe_width = COLS / size;
     double execTime;
-
-    // stripes = num rows of A and cols of B for each proc
-    // each proc will compute p * stripes : (p+1) * stripes of the rows of C matrix
-
-    // data for each proc:
-    // each proc will have STRIPES rows of A and STRIPES cols of B
-    // each proc will have ALL cols of A and ALL rows of B
-    // each proc will have STRIPES rows of C and a ALL cols of C
-    
-    // after compute shift STRIPES cols B left and grab more STRIPES cols of B from right proc (p + 1)
-    // note: handle wrap case for p0 and pmax
-
-    // after completion, each proc sends computed rows C to p0, which forms and prints
-    // TODO: how to form result?
-
 
     if (rank == 0)
     {
@@ -99,7 +82,6 @@ int main(int argc, char *argv[])
 
         // create arrays
         a = makeArray(ROWS, COLS);
-        c = makeArray(ROWS, COLS);
 
         printf("Array a:\r\n");
         printArray(a, ROWS, COLS);
@@ -190,6 +172,7 @@ int main(int argc, char *argv[])
         b_stripe = b_stripe_new;
     }
 
+    // GATHER
     // full stripe of c computed and located at a_row_offset
 
     double *c_build = NULL;
@@ -206,6 +189,21 @@ int main(int argc, char *argv[])
         printArray(c_build, ROWS, COLS);
         printf("Time taken for matrix multiply - mpi: %.2lf\r\n", execTime);
     }
+
+    // double *a_build = NULL;
+    // if (rank == 0)
+    // {
+    //     a_build = (double *)malloc(NUM_ELEMENTS * sizeof(double));
+    // }
+    // MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_build, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    // if (rank == 0)
+    // {
+    //     execTime += MPI_Wtime();
+    //     printf("Result array a:\r\n");
+    //     printArray(a_build, ROWS, COLS);
+    //     printf("Time taken for matrix multiply - mpi: %.2lf\r\n", execTime);
+    // }
 
     MPI_Finalize();                         /* terminate MPI       */
     return 0;
