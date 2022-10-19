@@ -38,6 +38,21 @@ double *makeArray(int rows, int cols)
     return arr;
 }
 
+double *makeArrayOnes(int rows, int cols)
+{
+    double *arr = (double *)malloc(rows * cols * sizeof(double));
+
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            idx(arr, r, c) = 1.0;
+        }
+    }
+
+    return arr;
+}
+
 int min(int i, int j)
 {
     return ((i) < (j) ? (i) : (j));
@@ -84,9 +99,7 @@ int main(int argc, char *argv[])
 
         // create arrays
         a = makeArray(ROWS, COLS);
-        b = makeArray(ROWS, COLS);
         c = makeArray(ROWS, COLS);
-
 
         printf("Array a:\r\n");
         printArray(a, ROWS, COLS);
@@ -98,93 +111,101 @@ int main(int argc, char *argv[])
      * Send data to procs
      * 
      * STRIPES rows of A and STRIPES cols of B
-     * ALL cols of A and ALL rows of B
-     * STRIPES rows of C and a ALL cols of C
+     * STRIPES rows of C generated from mm
      */
-    // a_offset = 0;
-    // b_offset = 0;
-    // c_offset = 0;
-    // for (int r = 1; r < size; r++)
-    // {
-    //     for (int i = t * stripeSize; i < min(t * stripeSize + stripeSize, ROWS); i++)
-    //     MPI_Send(a + a_offset, stripeSize, MPI_INT, r, 1, MPI_COMM_WORLD);
-    //     MPI_Send(b + b_offset, stripeSize, MPI_INT, r, 1, MPI_COMM_WORLD);
-    //     TODO: isn't this defeating the purpose of sending stripes?
-    //     MPI_Send(a, sizeof(a), MPI_INT, r, 1, MPI_COMM_WORLD);
-    //     MPI_Send(b, sizeof(b), MPI_INT, r, 1, MPI_COMM_WORLD);
-    //     MPI_Send(c + c_offset, stripeSize, MPI_INT, r, 1, MPI_COMM_WORLD);
-    //     MPI_Send(c, sizeof(c), MPI_INT, r, 1, MPI_COMM_WORLD);
-    // }
 
-    const int a_stripe_cnt = stripe_width * COLS;
+    // pointer for a_stripe used after scatter
+    const int a_stripe_cnt = stripe_width * ROWS;
     double *a_stripe = (double *)malloc(a_stripe_cnt * sizeof(double));
-    const int b_stripe_cnt = stripe_width * ROWS;
-    double *b_stripe = (double *)malloc(b_stripe_cnt * sizeof(double));
+    // pointer for b stripe, generated locally
+    // double buffered to prevent deadlock
+    const int b_stripe_cnt = stripe_width * COLS;
+    double *b_stripe = makeArrayOnes(b_stripe, ROWS, stripe_width);
+    double *b_stripe_new = (double *)malloc(b_stripe_cnt * sizeof(double));
+    // pointer for c stripe, generated locally
+    const int c_stripe_cnt = a_stripe_cnt;
+    double *c_stripe = makeArrayOnes(c_stripe, stripe_width, COLS);
 
     if (rank == 0)
     {
-        printf("Scattering data...\r\n");
+        printf("Scattering, computing, and gathering data...\r\n");
     }
     MPI_Scatter(a, a_stripe_cnt, MPI_DOUBLE, a_stripe, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // compute
-    printf("rank %d a_stripe: ", rank);
-    printArray(a_stripe, stripe_width, COLS);
+    // COMPUTE
 
-    double *a_reconstruct = NULL;
+    // Generated internally once
+    a_row_offset = rank * stripe_width;
+    // b col is generated internally to each proc
+    // initial offset set here, then updated after send/recv
+    b_col_offset = rank * stripe_width;
+    // destination rank, loops around with mod
+    int dest_rank;
+    int prev_rank;
+
+    for (int rank_cnt = 0; rank_cnt < size; rank_cnt++)
+    {
+        // iterating over rows of a and c
+        for (int i = a_row_offset; i < a_row_offset + stripe_width; i++)
+        {
+            // iterating over cols of b and c
+            for (int j = b_col_offset; j < b_col_offset + stripe_width; j++)
+            {
+                double comp = 0.;
+                // iterating over cols of a and rows of b
+                for (int k = 0; k < COLS; k++)
+                {
+                    comp += idx(a_stripe,i,k) * idx(b_stripe,k,j);
+                }
+                // storing result in row and col of c
+                idx(c_stripe,i,j) = comp;
+            }
+        }
+
+        dest_rank = (rank + 1) % size;
+        prev_rank = ((rank - 1) + size) % size;
+
+        // deadlock prevention
+        if (rank % 2 == 0)
+        {
+            // send b_stripe to the right
+            MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
+
+            // receive a new b_stripe from the left
+            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD);
+        }
+        else
+        {
+            // receive a new b_stripe from the left
+            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD);
+
+            // send b_stripe to the right
+            MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
+        }
+
+        // update offsets
+        b_col_offset = prev_rank * stripe_width;
+
+        // update pointers for b_stripe data
+        b_stripe = b_stripe_new;
+    }
+
+    // full stripe of c computed and located at a_row_offset
+
+    double *c_build = NULL;
     if (rank == 0)
     {
-        a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
+        c_build = (double *)malloc(NUM_ELEMENTS * sizeof(double));
     }
-    MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_reconstruct, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    if (rank == 0)
-    {
-        printf("Gathering data...\r\n");
-        printArray(a_reconstruct, ROWS, COLS);
-    }
-
-    // WORKER SECTION
-
-    // multiplication of elements
-    // for (int j = 0; j < stripe_col_size; j++)
-    // {
-    //     double comp = 0.;
-    //     for (int k = 0; k < stripe_col_size; k++)
-    //     {
-    //         comp += *(a + i * stripe_col_size + k) * *(b + k * stripe_col_size + j);
-    //     }
-    //     *(c + i * stripe_col_size + j) = comp;
-    // }
-
-    // send result to master task
-
-    // iterate over number of tasks
-    // for (int t = 0; t < tasks; t++)
-    // {
-    //     // iterate over stripes
-    //     for (int i = t * stripeSize; i < min(t * stripeSize + stripeSize, ROWS); i++)
-    //     {
-    //         // multiplication of elements
-    //         for (int j = 0; j < COLS; j++)
-    //         {
-    //             double comp = 0.;
-    //             for (int k = 0; k < COLS; k++)
-    //             {
-    //                 comp += *(a + i * COLS + k) * *(b + k * COLS + j);
-    //             }
-    //             *(c + i * COLS + j) = comp;
-    //         }
-    //     }
-    // }
+    MPI_Gather(c_stripe, c_stripe_cnt, MPI_DOUBLE, c_build, c_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     if (rank == 0)
     {
         execTime += MPI_Wtime();
+        printf("Result array c:\r\n");
+        printArray(c_build, ROWS, COLS);
         printf("Time taken for matrix multiply - mpi: %.2lf\r\n", execTime);
     }
-
-    // printArray(c, ROWS, COLS);
 
     MPI_Finalize();                         /* terminate MPI       */
     return 0;
