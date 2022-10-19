@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     double *b_stripe_new = (double *)malloc(b_stripe_cnt * sizeof(double));
     // pointer for c stripe, generated locally
     const int c_stripe_cnt = a_stripe_cnt;
-    double *c_stripe = makeArrayOnes(stripe_width, COLS);
+    double *c_stripe = (double *)malloc(c_stripe_cnt * sizeof(double));
 
     if (rank == 0)
     {
@@ -128,10 +128,10 @@ int main(int argc, char *argv[])
     for (int rank_cnt = 0; rank_cnt < size; rank_cnt++)
     {
         // iterating over rows of a and c
-        for (int i = a_row_offset; i < a_row_offset + stripe_width; i++)
+        for (int i = 0; i < stripe_width; i++)
         {
             // iterating over cols of b and c
-            for (int j = b_col_offset; j < b_col_offset + stripe_width; j++)
+            for (int j = 0; j < stripe_width; j++)
             {
                 double comp = 0.;
                 // iterating over cols of a and rows of b
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
                     comp += idx(a_stripe,i,k) * idx(b_stripe,k,j);
                 }
                 // storing result in row and col of c
-                idx(c_stripe,i,j) = comp;
+                idx(c_stripe,i,j + b_col_offset) = comp;
             }
         }
 
