@@ -117,14 +117,13 @@ int main(int argc, char *argv[])
     // }
 
     const int a_stripe_cnt = stripe_width * ROWS;
-    double *a_stripe = malloc(a_stripe_cnt * sizeof(double));
+    double *a_stripe = (double *)malloc(a_stripe_cnt * sizeof(double));
     const int b_stripe_cnt = stripe_width * COLS;
-    double *b_stripe = malloc(b_stripe_cnt * sizeof(double));
+    double *b_stripe = (double *)malloc(b_stripe_cnt * sizeof(double));
 
     if (rank == 0)
     {
         printf("Scattering data...\r\n");
-        printArray(a, ROWS, COLS);
     }
     // MPI_Scatter(a, a_stripe_cnt, MPI_DOUBLE, a_stripe, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
