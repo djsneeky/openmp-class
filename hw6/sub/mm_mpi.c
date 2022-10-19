@@ -117,10 +117,10 @@ int main(int argc, char *argv[])
     //     MPI_Send(c, sizeof(c), MPI_INT, r, 1, MPI_COMM_WORLD);
     // }
 
-    double *a_stripe = NULL;
     const int a_stripe_cnt = stripe_width * ROWS;
-    double *b_stripe = NULL;
+    double *a_stripe = malloc(a_stripe_cnt * sizeof(double));
     const int b_stripe_cnt = stripe_width * COLS;
+    double *b_stripe = malloc(b_stripe_cnt * sizeof(double));
 
     if (rank == 0)
     {
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
     double *a_reconstruct = NULL;
     if (rank == 0)
     {
-        double *a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
+        a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
         printf("Gathering data...\r\n");
     }
     MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_reconstruct, NUM_ELEMENTS, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -188,4 +188,5 @@ int main(int argc, char *argv[])
     // printArray(c, ROWS, COLS);
 
     MPI_Finalize();                         /* terminate MPI       */
+    return 0;
 }
