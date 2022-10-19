@@ -120,11 +120,11 @@ int main(int argc, char *argv[])
     // pointer for b stripe, generated locally
     // double buffered to prevent deadlock
     const int b_stripe_cnt = stripe_width * COLS;
-    double *b_stripe = makeArrayOnes(b_stripe, ROWS, stripe_width);
+    double *b_stripe = makeArrayOnes(ROWS, stripe_width);
     double *b_stripe_new = (double *)malloc(b_stripe_cnt * sizeof(double));
     // pointer for c stripe, generated locally
     const int c_stripe_cnt = a_stripe_cnt;
-    double *c_stripe = makeArrayOnes(c_stripe, stripe_width, COLS);
+    double *c_stripe = makeArrayOnes(stripe_width, COLS);
 
     if (rank == 0)
     {
@@ -135,10 +135,10 @@ int main(int argc, char *argv[])
     // COMPUTE
 
     // Generated internally once
-    a_row_offset = rank * stripe_width;
+    int a_row_offset = rank * stripe_width;
     // b col is generated internally to each proc
     // initial offset set here, then updated after send/recv
-    b_col_offset = rank * stripe_width;
+    int b_col_offset = rank * stripe_width;
     // destination rank, loops around with mod
     int dest_rank;
     int prev_rank;
@@ -172,12 +172,12 @@ int main(int argc, char *argv[])
             MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
 
             // receive a new b_stripe from the left
-            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD);
+            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
         else
         {
             // receive a new b_stripe from the left
-            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD);
+            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
             // send b_stripe to the right
             MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
