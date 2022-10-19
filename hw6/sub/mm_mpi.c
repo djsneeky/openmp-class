@@ -4,11 +4,11 @@
 #include <mpi.h>
 
 // offset into row, then over to correct column
-#define idx(u, r, c) (u[r*NUMCOLS + c])
+#define idx(u, r, c) (u[r*COLS + c])
 
-const int ROWS = 16;
-const int COLS = 16;
-const int NUM_ELEMENTS = ROWS * COLS;
+#define ROWS            16
+#define COLS            16
+#define NUM_ELEMENTS    (ROWS * COLS)
 
 void printArray(double *a, int rows, int cols)
 {
