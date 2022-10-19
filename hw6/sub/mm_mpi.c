@@ -4,7 +4,7 @@
 #include <mpi.h>
 
 // offset into row, then over to correct column
-#define idx(u, r, c) (u + r*COLS + c)
+#define idx(u, r, c) *(u + r*COLS + c)
 
 #define ROWS            16
 #define COLS            16
