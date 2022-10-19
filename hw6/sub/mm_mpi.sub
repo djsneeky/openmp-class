@@ -5,4 +5,4 @@
 #SBATCH -t 00:0:30
 #SBATCH -A scholar
 
-srun --mpi=pmi2 -n 16 ./mm_mpi
+srun --mpi=pmi2 -n 4 ./mm_mpi
