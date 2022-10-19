@@ -18,9 +18,9 @@ void printArray(double *a, int rows, int cols)
         {
             printf("%.2f ", *(a + i * cols + j));
         }
-        printf("\n");
+        printf("\r\n");
     }
-    printf("\n\n\n");
+    printf("\r\n");
 }
 
 double *makeArray(int rows, int cols)
@@ -90,7 +90,6 @@ int main(int argc, char *argv[])
 
         printf("Array a:\r\n");
         printArray(a, ROWS, COLS);
-        printArray(b, ROWS, COLS);
 
         execTime = -MPI_Wtime();
     }
@@ -117,26 +116,26 @@ int main(int argc, char *argv[])
     //     MPI_Send(c, sizeof(c), MPI_INT, r, 1, MPI_COMM_WORLD);
     // }
 
-    // const int a_stripe_cnt = stripe_width * ROWS;
-    // double *a_stripe = malloc(a_stripe_cnt * sizeof(double));
-    // const int b_stripe_cnt = stripe_width * COLS;
-    // double *b_stripe = malloc(b_stripe_cnt * sizeof(double));
+    const int a_stripe_cnt = stripe_width * ROWS;
+    double *a_stripe = malloc(a_stripe_cnt * sizeof(double));
+    const int b_stripe_cnt = stripe_width * COLS;
+    double *b_stripe = malloc(b_stripe_cnt * sizeof(double));
 
-    // if (rank == 0)
-    // {
-    //     printf("Scattering data...\r\n");
-    //     printArray(a, ROWS, COLS);
-    // }
+    if (rank == 0)
+    {
+        printf("Scattering data...\r\n");
+        printArray(a, ROWS, COLS);
+    }
     // MPI_Scatter(a, a_stripe_cnt, MPI_DOUBLE, a_stripe, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     // // compute
 
-    // double *a_reconstruct = NULL;
-    // if (rank == 0)
-    // {
-    //     a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
-    //     printf("Gathering data...\r\n");
-    // }
+    double *a_reconstruct = NULL;
+    if (rank == 0)
+    {
+        a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
+        printf("Gathering data...\r\n");
+    }
     // MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_reconstruct, NUM_ELEMENTS, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     // if (rank == 0)
