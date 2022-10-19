@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
     //     MPI_Send(c, sizeof(c), MPI_INT, r, 1, MPI_COMM_WORLD);
     // }
 
-    int *a_stripe = NULL;
+    double *a_stripe = NULL;
     const int a_stripe_cnt = stripe_width * ROWS;
-    int *b_stripe = NULL;
+    double *b_stripe = NULL;
     const int b_stripe_cnt = stripe_width * COLS;
 
     if (rank == 0)
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
     // compute
 
-    int *a_reconstruct = NULL;
+    double *a_reconstruct = NULL;
     if (rank == 0)
     {
         double *a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
