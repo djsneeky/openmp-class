@@ -31,7 +31,7 @@ double *makeArray(int rows, int cols)
     {
         for (int c = 0; c < cols; c++)
         {
-            idx(arr, r, c) = (double)(rows * c + c);
+            idx(arr, r, c) = (double)(rows * r + c);
         }
     }
 
@@ -57,6 +57,9 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);   /* get rank            */
     MPI_Get_processor_name(name, &len);     /* get run-host name   */
 
+    double *a = NULL;
+    double *b = NULL;
+    double *c = NULL;
     const int stripe_width = COLS / rank;
     double execTime;
 
@@ -74,15 +77,20 @@ int main(int argc, char *argv[])
     // after completion, each proc sends computed rows C to p0, which forms and prints
     // TODO: how to form result?
 
-    // master task
+
     if (rank == 0)
     {
         printf("mm_mpi has started with %d ranks.\r\n",size);
 
         // create arrays
-        double *a = makeArray(ROWS, COLS);
-        double *b = makeArray(ROWS, COLS);
-        double *c = makeArray(ROWS, COLS);
+        a = makeArray(ROWS, COLS);
+        b = makeArray(ROWS, COLS);
+        c = makeArray(ROWS, COLS);
+
+
+        printf("Array a:\r\n");
+        printArray(a, ROWS, COLS);
+        printArray(b, ROWS, COLS);
 
         execTime = -MPI_Wtime();
     }
@@ -109,9 +117,9 @@ int main(int argc, char *argv[])
     //     MPI_Send(c, sizeof(c), MPI_INT, r, 1, MPI_COMM_WORLD);
     // }
 
-    int *a_stripe;
+    int *a_stripe = NULL;
     const int a_stripe_cnt = stripe_width * ROWS;
-    int *b_stripe;
+    int *b_stripe = NULL;
     const int b_stripe_cnt = stripe_width * COLS;
 
     if (rank == 0)
@@ -123,13 +131,18 @@ int main(int argc, char *argv[])
 
     // compute
 
-    int *a_reconstruct;
+    int *a_reconstruct = NULL;
     if (rank == 0)
     {
         double *a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
         printf("Gathering data...\r\n");
     }
     MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_reconstruct, NUM_ELEMENTS, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    if (rank == 0)
+    {
+        printArray(a_reconstruct, ROWS, COLS);
+    }
 
     // WORKER SECTION
     // receive data from master
