@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
     {
         a_reconstruct = (double *)malloc(NUM_ELEMENTS * sizeof(double));
     }
-    MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_reconstruct, NUM_ELEMENTS, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Gather(a_stripe, a_stripe_cnt, MPI_DOUBLE, a_reconstruct, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     if (rank == 0)
     {
@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
     }
 
     // WORKER SECTION
-    // receive data from master
 
     // multiplication of elements
     // for (int j = 0; j < stripe_col_size; j++)
