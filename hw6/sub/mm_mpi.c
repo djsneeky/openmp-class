@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     double *a = NULL;
     double *b = NULL;
     double *c = NULL;
-    const int stripe_width = COLS / rank;
+    const int stripe_width = COLS / size;
     double execTime;
 
     // stripes = num rows of A and cols of B for each proc
