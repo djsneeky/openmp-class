@@ -187,14 +187,6 @@ int main(int argc, char *argv[])
 
     // printArray(c, ROWS, COLS);
 
-    // free everythinig
-    free(a);
-    free(b);
-    free(c);
-    free(a_stripe);
-    free(b_stripe);
-    free(a_reconstruct);
-
     MPI_Finalize();                         /* terminate MPI       */
     return 0;
 }
