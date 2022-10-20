@@ -97,11 +97,11 @@ int main(int argc, char *argv[])
      */
 
     // pointer for a_stripe used after scatter
-    const int a_stripe_cnt = stripe_width * ROWS;
+    const int a_stripe_cnt = stripe_width * COLS;
     double *a_stripe = (double *)malloc(a_stripe_cnt * sizeof(double));
     // pointer for b stripe, generated locally
     // double buffered to prevent deadlock
-    const int b_stripe_cnt = stripe_width * COLS;
+    const int b_stripe_cnt = stripe_width * ROWS;
     double *b_stripe = makeArrayOnes(ROWS, stripe_width);
     double *b_stripe_new = (double *)malloc(b_stripe_cnt * sizeof(double));
     // pointer for c stripe, generated locally
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 
     if (rank == 0)
     {
-        printf("Scattering, computing, and gathering data...\r\n");
+        printf("Scattering, computing, and gathering data...\r\n\n");
     }
     MPI_Scatter(a, a_stripe_cnt, MPI_DOUBLE, a_stripe, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -124,6 +124,16 @@ int main(int argc, char *argv[])
     // destination rank, loops around with mod
     int dest_rank;
     int prev_rank;
+
+    if (rank == 0)
+    {
+        printf("a_row_offset on rank %d: %d\r\n", rank, a_row_offset);
+        printf("a_stripe on rank %d: ", rank);
+        printArray(a_stripe, stripe_width, COLS);
+        printf("b_col_offset on rank %d: %d\r\n", rank, b_col_offset);
+        printf("b_stripe on rank %d: ", rank);
+        printArray(b_stripe, ROWS, stripe_width);
+    }
 
     for (int rank_cnt = 0; rank_cnt < size; rank_cnt++)
     {
@@ -170,6 +180,12 @@ int main(int argc, char *argv[])
 
         // update pointers for b_stripe data
         b_stripe = b_stripe_new;
+    }
+
+    if (rank == 0)
+    {
+        printf("c_stripe on rank %d: ", rank);
+        printArray(c_stripe, stripe_width, COLS);
     }
 
     // GATHER
