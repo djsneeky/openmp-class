@@ -122,21 +122,25 @@ int main(int argc, char *argv[])
     // initial offset set here, then updated after send/recv
     int b_col_offset = rank * stripe_width;
     // destination rank, loops around with mod
-    int dest_rank;
-    int prev_rank;
+    int dest_rank = (rank + 1) % size;
+    int prev_rank = ((rank - 1) + size) % size;
 
     if (rank == 0)
     {
         printf("a_row_offset on rank %d: %d\r\n", rank, a_row_offset);
         printf("a_stripe on rank %d:\r\n", rank);
         printArray(a_stripe, stripe_width, COLS);
-        printf("b_col_offset on rank %d: %d\r\n", rank, b_col_offset);
         printf("b_stripe on rank %d:\r\n", rank);
         printArray(b_stripe, ROWS, stripe_width);
     }
 
     for (int rank_cnt = 0; rank_cnt < size; rank_cnt++)
     {
+        if (rank == 0)
+        {
+            printf("b_col_offset on rank %d iteration %d: %d\r\n", rank, rank_cnt, b_col_offset);
+        }
+
         // iterating over rows of a and c
         for (int i = 0; i < stripe_width; i++)
         {
@@ -153,9 +157,6 @@ int main(int argc, char *argv[])
                 idx(c_stripe,i,j + b_col_offset,COLS) = comp;
             }
         }
-
-        dest_rank = (rank + 1) % size;
-        prev_rank = ((rank - 1) + size) % size;
 
         // deadlock prevention
         if (rank % 2 == 0)
