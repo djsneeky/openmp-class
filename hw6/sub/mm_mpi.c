@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
                 // iterating over cols of a and rows of b
                 for (int k = 0; k < COLS; k++)
                 {
-                    comp += idx(a_stripe,i,k,COLS) * idx(b_stripe,j,k,stripe_width);
+                    comp += idx(a_stripe,i,k,COLS) * idx(b_stripe,j,k,COLS);
                 }
                 // storing result in row and col of c
                 idx(c_stripe,i,j + b_col_offset,COLS) = comp;
