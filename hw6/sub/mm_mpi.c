@@ -152,20 +152,23 @@ int main(int argc, char *argv[])
             }
         }
 
-        // deadlock prevention
-        if (rank % 2 == 0)
+        if (size != 1)
         {
-            // send b_stripe to the right
-            MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
-            // receive a new b_stripe from the left
-            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        }
-        else
-        {
-            // receive a new b_stripe from the left
-            MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            // send b_stripe to the right
-            MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
+            // deadlock prevention
+            if (rank % 2 == 0)
+            {
+                // send b_stripe to the right
+                MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
+                // receive a new b_stripe from the left
+                MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            }
+            else
+            {
+                // receive a new b_stripe from the left
+                MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                // send b_stripe to the right
+                MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
+            }
         }
 
         // update offsets
