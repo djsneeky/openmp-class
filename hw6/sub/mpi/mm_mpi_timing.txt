@@ -1,0 +1,4 @@
+1 proc - 1.35s
+4 proc - 0.40s
+8 proc - 0.22s
+16 proc - 0.13s
