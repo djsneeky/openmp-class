@@ -90,17 +90,9 @@ int main(int argc, char *argv[])
         // create arrays
         a = makeArray(ROWS, COLS);
 
-        // printf("Array a:\r\n");
-        // printArray(a, ROWS, COLS);
-
+        printf("Array a:\r\n");
+        printArray(a, ROWS, COLS);
     }
-
-    /**
-     * Send data to procs
-     * 
-     * STRIPES rows of A and STRIPES cols of B
-     * STRIPES rows of C generated from mm
-     */
 
     // pointer for a_stripe used after scatter
     const int a_stripe_cnt = stripe_width * COLS;
@@ -114,10 +106,6 @@ int main(int argc, char *argv[])
     const int c_stripe_cnt = a_stripe_cnt;
     double *c_stripe = (double *)malloc(c_stripe_cnt * sizeof(double));
 
-    // if (rank == 0)
-    // {
-    //     printf("Scattering, computing, and gathering data...\r\n\n");
-    // }
     MPI_Scatter(a, a_stripe_cnt, MPI_DOUBLE, a_stripe, a_stripe_cnt, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     // COMPUTE
@@ -131,21 +119,21 @@ int main(int argc, char *argv[])
     int dest_rank = (rank + 1) % size;
     int prev_rank = ((rank - 1) + size) % size;
 
-    // if (rank == 0)
-    // {
-    //     printf("a_row_offset on rank %d: %d\r\n", rank, a_row_offset);
-    //     printf("a_stripe on rank %d:\r\n", rank);
-    //     printArray(a_stripe, stripe_width, COLS);
-    //     printf("b_stripe on rank %d:\r\n", rank);
-    //     printArray(b_stripe, ROWS, stripe_width);
-    // }
+    if (rank == 0)
+    {
+        printf("a_row_offset on rank %d: %d\r\n", rank, a_row_offset);
+        printf("a_stripe on rank %d:\r\n", rank);
+        printArray(a_stripe, stripe_width, COLS);
+        printf("b_stripe on rank %d:\r\n", rank);
+        printArray(b_stripe, ROWS, stripe_width);
+    }
 
     for (int rank_cnt = 0; rank_cnt < size; rank_cnt++)
     {
-        // if (rank == 0)
-        // {
-        //     printf("b_col_offset on rank %d iteration %d: %d\r\n", rank, rank_cnt, b_col_offset);
-        // }
+        if (rank == 0)
+        {
+            printf("b_col_offset on rank %d iteration %d: %d\r\n", rank, rank_cnt, b_col_offset);
+        }
 
         // iterating over rows of a and c
         for (int i = 0; i < stripe_width; i++)
@@ -169,7 +157,6 @@ int main(int argc, char *argv[])
         {
             // send b_stripe to the right
             MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
-
             // receive a new b_stripe from the left
             MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
@@ -177,7 +164,6 @@ int main(int argc, char *argv[])
         {
             // receive a new b_stripe from the left
             MPI_Recv(b_stripe_new, b_stripe_cnt, MPI_DOUBLE, prev_rank, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
             // send b_stripe to the right
             MPI_Send(b_stripe, b_stripe_cnt, MPI_DOUBLE, dest_rank, 1, MPI_COMM_WORLD);
         }
@@ -189,11 +175,11 @@ int main(int argc, char *argv[])
         b_stripe = b_stripe_new;
     }
 
-    // if (rank == 0)
-    // {
-    //     printf("c_stripe on rank %d:\r\n", rank);
-    //     printArray(c_stripe, stripe_width, COLS);
-    // }
+    if (rank == 0)
+    {
+        printf("c_stripe on rank %d:\r\n", rank);
+        printArray(c_stripe, stripe_width, COLS);
+    }
 
     // GATHER
     // full stripe of c computed and located at a_row_offset
@@ -211,8 +197,8 @@ int main(int argc, char *argv[])
     if (rank == 0)
     {
         execTime += MPI_Wtime();
-        // printf("Result array c:\r\n");
-        // printArray(c_build, ROWS, COLS);
+        printf("Result array c:\r\n");
+        printArray(c_build, ROWS, COLS);
         printf("Time taken for matrix multiply - mpi: %.2lf\r\n", execTime);
     }
 
