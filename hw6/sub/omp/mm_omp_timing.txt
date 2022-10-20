@@ -1,0 +1,4 @@
+1 threads - 21.30s
+4 threads - 5.48s
+8 threads - 2.86s
+16 threads - 1.46s
