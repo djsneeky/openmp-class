@@ -117,8 +117,8 @@ int main(int argc, char *argv[])
     // pointer for b stripe, generated locally
     // double buffered to prevent deadlock
     const int b_stripe_cnt = stripe_width * ROWS;
-    // double *b_stripe = makeArrayOnes(ROWS, stripe_width);
-    double *b_stripe = makeArrayRank(ROWS, stripe_width, rank);
+    double *b_stripe = makeArrayOnes(ROWS, stripe_width);
+    // double *b_stripe = makeArrayRank(ROWS, stripe_width, rank);
     double *b_stripe_new = (double *)malloc(b_stripe_cnt * sizeof(double));
     // pointer for c stripe, generated locally
     const int c_stripe_cnt = a_stripe_cnt;
