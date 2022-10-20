@@ -4,7 +4,7 @@
 #include <mpi.h>
 
 // offset into row, then over to correct column
-#define idx(u, r, c) *(u + r*COLS + c)
+#define idx(u, r, c, max_cols) *(u + r*max_cols + c)
 
 #define ROWS            16
 #define COLS            16
@@ -31,7 +31,7 @@ double *makeArray(int rows, int cols)
     {
         for (int c = 0; c < cols; c++)
         {
-            idx(arr, r, c) = (double)(rows * r + c);
+            idx(arr, r, c, cols) = (double)(rows * r + c);
         }
     }
 
@@ -46,7 +46,7 @@ double *makeArrayOnes(int rows, int cols)
     {
         for (int c = 0; c < cols; c++)
         {
-            idx(arr, r, c) = 1.0;
+            idx(arr, r, c, cols) = 1.0;
         }
     }
 
@@ -147,10 +147,10 @@ int main(int argc, char *argv[])
                 // iterating over cols of a and rows of b
                 for (int k = 0; k < COLS; k++)
                 {
-                    comp += idx(a_stripe,i,k) * idx(b_stripe,k,j);
+                    comp += idx(a_stripe,i,k,COLS) * idx(b_stripe,k,j,stripe_width);
                 }
                 // storing result in row and col of c
-                idx(c_stripe,i,j + b_col_offset) = comp;
+                idx(c_stripe,i,j + b_col_offset,COLS) = comp;
             }
         }
 
