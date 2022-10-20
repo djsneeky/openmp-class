@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
     int a_row_offset = rank * stripe_width;
     // b col is generated internally to each proc
     // initial offset set here, then updated after send/recv
-    int b_col_offset = rank * stripe_width;
+    int c_offset = rank * stripe_width;
     // destination rank, loops around with mod
     int dest_rank = (rank + 1) % size;
     int prev_rank = ((rank - 1) + size) % size;
@@ -150,8 +150,10 @@ int main(int argc, char *argv[])
     {
         if (rank == 0)
         {
-            printf("b_col_offset on rank %d iteration %d: %d\r\n", rank, rank_cnt, b_col_offset);
+            printf("c_offset on rank %d iteration %d: %d\r\n", rank, rank_cnt, c_offset);
         }
+
+        double *c_block = c_stripe + c_offset;
 
         // iterating over rows of a and c
         for (int i = 0; i < stripe_width; i++)
@@ -166,7 +168,7 @@ int main(int argc, char *argv[])
                     comp += idx(a_stripe,i,k,COLS) * idx(b_stripe,j,k,COLS);
                 }
                 // storing result in row and col of c
-                idx(c_stripe,i,j + b_col_offset,COLS) = comp;
+                idx(c_block,i,j,COLS) = comp;
             }
         }
 
@@ -190,7 +192,7 @@ int main(int argc, char *argv[])
         }
 
         // update offsets
-        b_col_offset = ((b_col_offset - stripe_width) + COLS) % COLS;
+        c_offset = ((c_offset - stripe_width) + COLS) % COLS;
 
         // update pointers for b_stripe data
         b_stripe = b_stripe_new;
