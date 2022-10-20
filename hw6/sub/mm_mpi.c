@@ -27,11 +27,13 @@ double *makeArray(int rows, int cols)
 {
     double *arr = (double *)malloc(rows * cols * sizeof(double));
 
+    double temp = 0;
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
         {
-            idx(arr, r, c, cols) = (double)(rows * r + c);
+            idx(arr, r, c, cols) = (double)(rows * c + c) + temp;
+            temp++;
         }
     }
 
@@ -47,6 +49,21 @@ double *makeArrayOnes(int rows, int cols)
         for (int c = 0; c < cols; c++)
         {
             idx(arr, r, c, cols) = 1.0;
+        }
+    }
+
+    return arr;
+}
+
+double *makeArrayRank(int rows, int cols, int rank)
+{
+    double *arr = (double *)malloc(rows * cols * sizeof(double));
+
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            idx(arr, r, c, cols) = (double) rank;
         }
     }
 
@@ -100,7 +117,8 @@ int main(int argc, char *argv[])
     // pointer for b stripe, generated locally
     // double buffered to prevent deadlock
     const int b_stripe_cnt = stripe_width * ROWS;
-    double *b_stripe = makeArrayOnes(ROWS, stripe_width);
+    // double *b_stripe = makeArrayOnes(ROWS, stripe_width);
+    double *b_stripe = makeArrayRank(ROWS, stripe_width, rank);
     double *b_stripe_new = (double *)malloc(b_stripe_cnt * sizeof(double));
     // pointer for c stripe, generated locally
     const int c_stripe_cnt = a_stripe_cnt;
