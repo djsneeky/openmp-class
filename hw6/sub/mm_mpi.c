@@ -128,10 +128,10 @@ int main(int argc, char *argv[])
     if (rank == 0)
     {
         printf("a_row_offset on rank %d: %d\r\n", rank, a_row_offset);
-        printf("a_stripe on rank %d: ", rank);
+        printf("a_stripe on rank %d:\r\n", rank);
         printArray(a_stripe, stripe_width, COLS);
         printf("b_col_offset on rank %d: %d\r\n", rank, b_col_offset);
-        printf("b_stripe on rank %d: ", rank);
+        printf("b_stripe on rank %d:\r\n", rank);
         printArray(b_stripe, ROWS, stripe_width);
     }
 
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
                 // iterating over cols of a and rows of b
                 for (int k = 0; k < COLS; k++)
                 {
-                    comp += idx(a_stripe,i,k,COLS) * idx(b_stripe,k,j,stripe_width);
+                    comp += idx(a_stripe,i,k,COLS) * idx(b_stripe,j,k,stripe_width);
                 }
                 // storing result in row and col of c
                 idx(c_stripe,i,j + b_col_offset,COLS) = comp;
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
 
     if (rank == 0)
     {
-        printf("c_stripe on rank %d: ", rank);
+        printf("c_stripe on rank %d:\r\n", rank);
         printArray(c_stripe, stripe_width, COLS);
     }
 
