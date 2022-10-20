@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
         }
 
         // update offsets
-        b_col_offset = prev_rank * stripe_width;
+        b_col_offset = ((b_col_offset - stripe_width) + COLS) % COLS;
 
         // update pointers for b_stripe data
         b_stripe = b_stripe_new;
