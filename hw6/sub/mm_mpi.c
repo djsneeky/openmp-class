@@ -6,8 +6,8 @@
 // offset into row, then over to correct column
 #define idx(u, r, c, max_cols) *(u + r*max_cols + c)
 
-#define ROWS            1600
-#define COLS            1600
+#define ROWS            16
+#define COLS            16
 #define NUM_ELEMENTS    (ROWS * COLS)
 
 void printArray(double *a, int rows, int cols)
@@ -83,10 +83,10 @@ int main(int argc, char *argv[])
 
     // block all tasks to get accurate timing
     MPI_Barrier(MPI_COMM_WORLD);
+    execTime = -MPI_Wtime();
 
     if (rank == 0)
     {
-        execTime = -MPI_Wtime();
         // create arrays
         a = makeArray(ROWS, COLS);
 
@@ -193,10 +193,10 @@ int main(int argc, char *argv[])
 
     // block all tasks to get accurate timing
     MPI_Barrier(MPI_COMM_WORLD);
+    execTime += MPI_Wtime();
 
     if (rank == 0)
     {
-        execTime += MPI_Wtime();
         printf("Result array c:\r\n");
         printArray(c_build, ROWS, COLS);
         printf("Time taken for matrix multiply - mpi: %.2lf\r\n", execTime);
