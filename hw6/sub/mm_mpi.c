@@ -105,8 +105,8 @@ int main(int argc, char *argv[])
         // create arrays
         a = makeArray(ROWS, COLS);
 
-        printf("Array a:\r\n");
-        printArray(a, ROWS, COLS);
+        // printf("Array a:\r\n");
+        // printArray(a, ROWS, COLS);
     }
 
     // pointer for a_stripe used after scatter
@@ -135,21 +135,21 @@ int main(int argc, char *argv[])
     int dest_rank = (rank + 1) % size;
     int prev_rank = ((rank - 1) + size) % size;
 
-    if (rank == 0)
-    {
-        printf("a_row_offset on rank %d: %d\r\n", rank, a_row_offset);
-        printf("a_stripe on rank %d:\r\n", rank);
-        printArray(a_stripe, stripe_width, COLS);
-        printf("b_stripe on rank %d:\r\n", rank);
-        printArray(b_stripe, ROWS, stripe_width);
-    }
+    // if (rank == 0)
+    // {
+    //     printf("a_row_offset on rank %d: %d\r\n", rank, a_row_offset);
+    //     printf("a_stripe on rank %d:\r\n", rank);
+    //     printArray(a_stripe, stripe_width, COLS);
+    //     printf("b_stripe on rank %d:\r\n", rank);
+    //     printArray(b_stripe, ROWS, stripe_width);
+    // }
 
     for (int rank_cnt = 0; rank_cnt < size; rank_cnt++)
     {
-        if (rank == 0)
-        {
-            printf("c_offset on rank %d iteration %d: %d\r\n", rank, rank_cnt, c_offset);
-        }
+        // if (rank == 0)
+        // {
+        //     printf("c_offset on rank %d iteration %d: %d\r\n", rank, rank_cnt, c_offset);
+        // }
 
         double *c_block = c_stripe + c_offset;
 
@@ -196,11 +196,11 @@ int main(int argc, char *argv[])
         b_stripe = b_stripe_new;
     }
 
-    if (rank == 0)
-    {
-        printf("c_stripe on rank %d:\r\n", rank);
-        printArray(c_stripe, stripe_width, COLS);
-    }
+    // if (rank == 0)
+    // {
+    //     printf("c_stripe on rank %d:\r\n", rank);
+    //     printArray(c_stripe, stripe_width, COLS);
+    // }
 
     // GATHER
     // full stripe of c computed and located at a_row_offset
@@ -218,9 +218,9 @@ int main(int argc, char *argv[])
 
     if (rank == 0)
     {
-        printf("Result array c:\r\n");
-        printArray(c_build, ROWS, COLS);
-        printf("Time taken for matrix multiply - mpi: %.2lf\r\n", execTime);
+        // printf("Result array c:\r\n");
+        // printArray(c_build, ROWS, COLS);
+        printf("Time taken for matrix multiply - mpi: %.2f\r\n", execTime);
     }
 
     MPI_Finalize();                         /* terminate MPI       */
