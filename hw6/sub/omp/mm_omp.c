@@ -78,6 +78,6 @@ int main(int argc, char *argv[])
     execTime += omp_get_wtime();
 
     // printArray(c, ROWS, COLS);
-   printf("time taken for matrix multiply with %d threads: %.2f ", omp_get_num_threads(), timeTaken);
+   printf("time taken for matrix multiply with %d threads: %.2f ", omp_get_num_threads(), execTime);
 
 }
