@@ -27,13 +27,11 @@ double *makeArray(int rows, int cols)
 {
     double *arr = (double *)malloc(rows * cols * sizeof(double));
 
-    double temp = 0;
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
         {
-            idx(arr, r, c, cols) = (double)(rows * c + c) + temp;
-            temp++;
+            idx(arr, r, c, cols) = (double)(rows * r + c);
         }
     }
 
