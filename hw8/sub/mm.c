@@ -79,7 +79,7 @@ void initRowColPidMaps( ) {
 MPI_Datatype makeType( ) {
    MPI_Datatype block, blocktype;
    //MPI_Type_vector(LOCAL_ARRAY_ROWS, LOCAL_ARRAY_COLS, LOCAL_ARRAY_ROWS, MPI_DOUBLE, &block);
-   MPI_Type_vector(LOCAL_ARRAY_ROWS, LOCAL_ARRAY_ROWS, ARRAY_COLS, MPI_INT, &block);
+   MPI_Type_vector(LOCAL_ARRAY_ROWS, LOCAL_ARRAY_ROWS, ARRAY_COLS, MPI_DOUBLE, &block);
    MPI_Type_commit(&block);
    MPI_Type_create_resized(block, 0, LOCAL_ARRAY_ROWS*sizeof(double),
    &blocktype);
