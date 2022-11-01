@@ -5,10 +5,10 @@
 #include <mpi.h>
 // KILL change int to double , MPI_INTEGER to MPI_DOUBLE
 
-// #define ARRAY_ROWS 1600
-// #define ARRAY_COLS 1600
-#define ARRAY_ROWS 16
-#define ARRAY_COLS 16
+#define ARRAY_ROWS 1600
+#define ARRAY_COLS 1600
+// #define ARRAY_ROWS 16
+// #define ARRAY_COLS 16
 #define SQRT_P 4
 #define PROC_ROWS SQRT_P
 #define PROC_COLS SQRT_P
