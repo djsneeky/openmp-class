@@ -2,10 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
-#define ARRAY_ROWS 1600
-#define ARRAY_COLS 1600
-// #define ARRAY_ROWS 16
-// #define ARRAY_COLS 16
+// #define ARRAY_ROWS 1600
+// #define ARRAY_COLS 1600
+#define ARRAY_ROWS 16
+#define ARRAY_COLS 16
 
 void printArray(int* a, int rows, int cols, int sparseness) {
    printf("rows: %d, cols: %d, sparseness: %d\n", rows, cols, sparseness);
@@ -51,6 +51,6 @@ int main (int argc, char *argv[]) {
    }
 
    printf("Array values:\n");
-   printArray(c, ARRAY_ROWS/4, ARRAY_COLS/4, 25);
+   printArray(c, ARRAY_ROWS/4, ARRAY_COLS/4, 1);
    return 0;
 }
