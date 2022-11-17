@@ -37,11 +37,20 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
     // reduce the values in the buffer to have a single value in the zero element of
     // each buffer.  Use the "good" reduction described in the histogram slides
     // Remember to synchronize appropriately.
-    int stride = blockDim.x * gridDim.x;
-    while (idx < length)
+    // int stride = blockDim.x * gridDim.x;
+    // while (idx < length)
+    // {
+    //     atomicAdd(&partial[0], partial[threadIdx.x]);
+    //     idx += stride;
+    // }
+    if (threadIdx.x == 0)
     {
-        atomicAdd(&partial[0], partial[threadIdx.x]);
-        idx += stride;
+        double sum = 0;
+        for (int i = 0; i < THREADS_PER_BLOCK; i++)
+        {
+            sum += partial[i];
+        }
+        partial[0] = sum;
     }
 
     __syncthreads();
