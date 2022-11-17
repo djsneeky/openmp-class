@@ -1,0 +1,4 @@
+host dotProduct: 860160.000000
+Partial product on thread 0 block 0: 5.000000
+Partial sums on thread 0 block 0: 640.000000
+device dotProduct: 860160.000000
