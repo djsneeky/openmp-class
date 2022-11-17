@@ -130,6 +130,7 @@ int main(int argc, char **args)
     // call hdotProduct, print the value of c returned (which should equal the sequential
     // value printed above, and free h_a, h_b and h_c.
     device_dot = hdotProduct(h_c, h_a, h_b, lengthBytes, lengthElements, outputSize, TOTAL_BLOCKS, THREADS_PER_BLOCK);
+    cudaDeviceSynchronize();
 
     printf("device dotProduct: %lf", device_dot);
 
