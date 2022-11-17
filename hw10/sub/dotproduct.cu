@@ -32,6 +32,11 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
     // above.
     partial[threadIdx.x] = c;
 
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        printf("Partial product on thread %d block %d: %lf\r\n", threadIdx.x, blockIdx.x, partial[threadIdx.x]);
+    }
+
     __syncthreads();
 
     // reduce the values in the buffer to have a single value in the zero element of
@@ -53,6 +58,11 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
         partial[0] = sum;
     }
 
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        printf("Partial sums on thread %d block %d: %lf\r\n", threadIdx.x, blockIdx.x, partial[0]);
+    }
+
     __syncthreads();
 
     // write the partial reduction for each block stored in element zero of the shared
@@ -66,7 +76,7 @@ double hdotProduct(double *h_c, double *h_a, double *h_b, int lengthBytes, int l
 {
     double *d_a, *d_b, *d_c;
     double sum = 0;
-    int valsPerThread = 1;
+    int valsPerThread = 5;
 
     // Allocate memory on the device for the d_a, d_b and d_c arrays. Note that the
     // lengths of each are in bytes, not doubles.
@@ -133,14 +143,14 @@ int main(int argc, char **args)
         host_dot += h_a[i] * h_b[i];
     }
 
-    printf("host dotProduct: %lf", host_dot);
+    printf("host dotProduct: %lf\r\n", host_dot);
 
     // call hdotProduct, print the value of c returned (which should equal the sequential
     // value printed above, and free h_a, h_b and h_c.
     device_dot = hdotProduct(h_c, h_a, h_b, lengthBytes, lengthElements, outputSize, TOTAL_BLOCKS, THREADS_PER_BLOCK);
     cudaDeviceSynchronize();
 
-    printf("device dotProduct: %lf", device_dot);
+    printf("device dotProduct: %lf\r\n", device_dot);
 
     free(h_a);
     free(h_b);
