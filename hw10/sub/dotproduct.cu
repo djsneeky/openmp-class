@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <iostream.h>
 
 #define TOTAL_THREADS       172032
 #define THREADS_PER_BLOCK   128
