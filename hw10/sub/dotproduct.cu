@@ -40,7 +40,7 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
     int stride = blockDim.x * gridDim.x;
     while (idx < length)
     {
-        atomicAdd(&partial[0], partial[threadIdx.x])
+        atomicAdd(&partial[0], partial[threadIdx.x]);
         idx += stride;
     }
 
@@ -49,7 +49,7 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
     // write the partial reduction for each block stored in element zero of the shared
     // buffer, i.e., the value produced by the reduction above, into the proper
     // location for the block in d_c.
-    d_c[block_idx.x] = partial[0];
+    d_c[blockIdx.x] = partial[0];
 }
 
 double hdotProduct(double *h_c, double *h_a, double *h_b, int lengthBytes, int lengthElements,
@@ -124,7 +124,7 @@ int main(int argc, char **args)
         host_dot += h_a[i] * h_b[i];
     }
 
-    printf("host dotProduct: %lf", seq_sum);
+    printf("host dotProduct: %lf", host_dot);
 
     // call hdotProduct, print the value of c returned (which should equal the sequential
     // value printed above, and free h_a, h_b and h_c.
