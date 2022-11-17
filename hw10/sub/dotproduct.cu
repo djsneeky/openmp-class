@@ -39,33 +39,33 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
         printf("Partial product on thread %d block %d: %lf\r\n", threadIdx.x, blockIdx.x, partial[threadIdx.x]);
     }
 
-    __syncthreads();
-
     // reduce the values in the buffer to have a single value in the zero element of
     // each buffer.  Use the "good" reduction described in the histogram slides
     // Remember to synchronize appropriately.
-    
-    // while (idx < length)
+    // bad way:
+    // if (threadIdx.x == 0)
     // {
-    //     atomicAdd(&partial[0], partial[threadIdx.x]);
-    //     idx += stride;
+    //     double sum = 0;
+    //     for (int i = 0; i < THREADS_PER_BLOCK; i++)
+    //     {
+    //         sum += partial[i];
+    //     }
+    //     partial[0] = sum;
     // }
-    if (threadIdx.x == 0)
+    // better reduction:
+    for (unsigned int i = blockDim.x / 2; i > 0; i /= 2)
     {
-        double sum = 0;
-        for (int i = 0; i < THREADS_PER_BLOCK; i++)
+        __syncthreads();
+        if (threadIdx.x < i)
         {
-            sum += partial[i];
+            partial[threadIdx.x] += partial[threadIdx.x+i];
         }
-        partial[0] = sum;
     }
 
     if (threadIdx.x == 0 && blockIdx.x == 0)
     {
         printf("Partial sums on thread %d block %d: %lf\r\n", threadIdx.x, blockIdx.x, partial[0]);
     }
-
-    __syncthreads();
 
     // write the partial reduction for each block stored in element zero of the shared
     // buffer, i.e., the value produced by the reduction above, into the proper
