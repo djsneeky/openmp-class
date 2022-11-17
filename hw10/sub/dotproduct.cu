@@ -15,7 +15,7 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
 
     // declare a thread local/automatic variable (we'll call it c) in a register to hold
     // the results for each thread in the loop below.
-    double c;
+    double c = 0;
 
     // compute the local dot product for each thread's values
     // each thread will do a multiply and summation across valsPerThread elements
@@ -24,8 +24,10 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
     // data, and then moving on to the next block, and doing this a total of
     // valsPerThread times.
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    int stride = blockDim.x * gridDim.x;
     for (int i = 0; i < valsPerThread; i++) {
         c += d_a[idx] * d_b[idx];
+        idx += stride;
     }
 
     // store c into the proper thred position of the shared memory buffer declared
@@ -42,7 +44,7 @@ __global__ void dotProduct(double *d_c, double *d_a, double *d_b, int length, in
     // reduce the values in the buffer to have a single value in the zero element of
     // each buffer.  Use the "good" reduction described in the histogram slides
     // Remember to synchronize appropriately.
-    // int stride = blockDim.x * gridDim.x;
+    
     // while (idx < length)
     // {
     //     atomicAdd(&partial[0], partial[threadIdx.x]);
